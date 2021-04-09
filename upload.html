@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1">
+
+    <title>SVG code to .png image</title>
+
+    <link rel="stylesheet" href="screen.css" media="screen">
+
+    <style media="screen">
+        body {
+            background-color: #f0f0f0;
+            font: 1em/150% verdana, arial, helvetica, sans-serif;
+            text-align: center;
+        }
+        
+        #container {
+            display: inline-block;
+            padding: 2em;
+            border: 0.062em solid #999;
+            border-radius: 1em;
+            background-color: #fff;
+            box-shadow: inset 0 0 1em rgba( 0, 0, 0, 0.3), 0.4em 0.4em 0.4em rgba( 0, 0, 0, 0.3);
+        }
+        
+        h1,
+        h2 {
+            font-size: 1em;
+        }
+        
+        svg,
+        canvas {
+            display: block;
+            margin: 1em 0;
+        }
+        
+        .hide {
+            display: none;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="container">
+
+        <h1>this is the svg image</h1>
+
+        <svg viewBox="0 0 1226 1481" width="64" height="64">
+  <path d="M0 1394V87C0 46.3 13.3 19.8 40 7.5 66.7-4.8 98.7.3 136 23l1034 634c37.3 22.7 56 50.3 56 83s-18.7 60.3-56 83L136 1458c-37.3 22.7-69.3 27.8-96 15.5-26.7-12.3-40-38.8-40-79.5z" fill="red"/>
+ </svg>
+
+        <button>svg to png</button>
+
+        <h2 class="hide">this is the png image</h2>
+
+        <canvas width="64" height="64"></canvas>
+
+    </div>
+
+    <script>
+        (function(w, d) {
+            'use strict';
+
+            var btn = d.querySelector('button');
+            var svg = d.querySelector('svg');
+            var canvas = d.querySelector('canvas');
+
+            var imageName = 'your-image-name';
+
+            function triggerDownload(imgURI) {
+                var evt = new MouseEvent('click', {
+                    view: w,
+                    bubbles: false,
+                    cancelable: true
+                });
+
+                var a = d.createElement('a');
+                a.setAttribute('download', imageName + '.png');
+                a.setAttribute('href', imgURI);
+                a.setAttribute('target', 'blank');
+                a.dispatchEvent(evt);
+            }
+
+            btn.addEventListener('click', function() {
+
+                var ctx = canvas.getContext('2d');
+                var data = (new XMLSerializer()).serializeToString(svg);
+                var DOMURL = w.URL || w.webkitURL || w;
+
+                var img = new Image();
+                var svgBlob = new Blob([data], {
+                    type: 'image/svg+xml;charset=utf-8'
+                });
+                var url = DOMURL.createObjectURL(svgBlob);
+
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0);
+                    DOMURL.revokeObjectURL(url);
+
+                    var imgURI = canvas
+                        .toDataURL('image/png')
+                        .replace('image/png', 'image/octet-stream');
+
+                    triggerDownload(imgURI);
+                };
+                img.src = url;
+                d.querySelector('h2').classList.remove('hide');
+            });
+        }(window, document));
+    </script>
+
+</body>
+
+</html>
+
+</html>
